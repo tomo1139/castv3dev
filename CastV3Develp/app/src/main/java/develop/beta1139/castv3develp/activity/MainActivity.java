@@ -2,6 +2,7 @@ package develop.beta1139.castv3develp.activity;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.MediaRouteButton;
@@ -16,6 +17,7 @@ import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.CastState;
 import com.google.android.gms.cast.framework.CastStateListener;
+import com.google.android.gms.cast.framework.IntroductoryOverlay;
 import com.google.android.gms.cast.framework.Session;
 import com.google.android.gms.cast.framework.SessionManager;
 import com.google.android.gms.cast.framework.SessionManagerListener;
@@ -37,7 +39,9 @@ public class MainActivity extends AppCompatActivity {
     private PlaybackLocation mLocation;
     private PlaybackState mPlaybackState;
     private CastStateListener mCastStateListener;
-    private MenuItem mediaRouteMenuItem;
+    //private MenuItem mediaRouteMenuItem;
+
+    private IntroductoryOverlay mIntroductoryOverlay;
 
     public enum PlaybackLocation {
         LOCAL,
@@ -61,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     D.p("");
                     mMediaRouteButton.setVisibility(View.VISIBLE);
-                    //showIntroductoryOverlay();
+                    showIntroductoryOverlay();
                 }
             }
         };
@@ -241,5 +245,31 @@ public class MainActivity extends AppCompatActivity {
         mCastContext.getSessionManager().removeSessionManagerListener(
                 mSessionManagerListener, CastSession.class);
         super.onPause();
+    }
+
+    private void showIntroductoryOverlay() {
+        if (mIntroductoryOverlay != null) {
+            mIntroductoryOverlay.remove();
+        }
+        if ((mMediaRouteButton != null) && mMediaRouteButton.getVisibility() == View.VISIBLE) {
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    mIntroductoryOverlay = new IntroductoryOverlay.Builder(
+                            MainActivity.this, mMediaRouteButton)
+                            .setTitleText("Introducing Cast")
+                            .setSingleTime()
+                            .setOnOverlayDismissedListener(
+                                    new IntroductoryOverlay.OnOverlayDismissedListener() {
+                                        @Override
+                                        public void onOverlayDismissed() {
+                                            mIntroductoryOverlay = null;
+                                        }
+                                    })
+                            .build();
+                    mIntroductoryOverlay.show();
+                }
+            });
+        }
     }
 }
