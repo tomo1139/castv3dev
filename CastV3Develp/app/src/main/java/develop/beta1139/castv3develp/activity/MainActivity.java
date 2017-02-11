@@ -1,6 +1,7 @@
 package develop.beta1139.castv3develp.activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.MediaRouteButton;
@@ -9,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.google.android.gms.cast.MediaInfo;
+import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
@@ -19,6 +21,7 @@ import com.google.android.gms.cast.framework.SessionManager;
 import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.google.android.gms.cast.framework.media.MediaUtils;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
+import com.google.android.gms.common.images.WebImage;
 
 import develop.beta1139.castv3develp.D;
 import develop.beta1139.castv3develp.R;
@@ -33,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
     private SessionManagerListener mSessionManagerListener;
     private PlaybackLocation mLocation;
     private PlaybackState mPlaybackState;
-    private MediaInfo mSelectedMedia;
     private CastStateListener mCastStateListener;
     private MenuItem mediaRouteMenuItem;
 
@@ -139,16 +141,7 @@ public class MainActivity extends AppCompatActivity {
             private void onApplicationConnected(CastSession castSession) {
                 D.p("");
                 mCastSession = castSession;
-                if (null != mSelectedMedia) {
-
-                    if (mPlaybackState == PlaybackState.PLAYING) {
-                        loadRemoteMedia(0, true);
-                        return;
-                    } else {
-                        mPlaybackState = PlaybackState.IDLE;
-                        updatePlaybackLocation(PlaybackLocation.REMOTE);
-                    }
-                }
+                loadRemoteMedia(0, true);
             }
 
             private void onApplicationDisconnected() {
@@ -185,9 +178,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onStatusUpdated() {
                 D.p("");
+                /*
                 Intent intent = new Intent(MainActivity.this, ExpandedControlsActivity.class);
                 startActivity(intent);
                 remoteMediaClient.removeListener(this);
+                */
             }
 
             @Override
@@ -210,7 +205,22 @@ public class MainActivity extends AppCompatActivity {
                 D.p("");
             }
         });
-        remoteMediaClient.load(mSelectedMedia, autoPlay, position);
+        remoteMediaClient.load(buildMediaInfo(), autoPlay, position);
+    }
+
+    private MediaInfo buildMediaInfo() {
+        MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
+
+        movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, "sub title");
+        movieMetadata.putString(MediaMetadata.KEY_TITLE, "title");
+        movieMetadata.addImage(new WebImage(Uri.parse("480x270/DesigningForGoogleCast2-480x270.jpg")));
+        movieMetadata.addImage(new WebImage(Uri.parse("780x1200/DesigningForGoogleCast-887x1200.jpg")));
+
+        return new MediaInfo.Builder("https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/hls/DesigningForGoogleCast.m3u8")
+                .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
+                .setContentType("application/x-mpegur")
+                .setMetadata(movieMetadata)
+                .build();
     }
 
     @Override
