@@ -213,8 +213,8 @@ public class MainActivity extends AppCompatActivity {
 
         movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, "sub title");
         movieMetadata.putString(MediaMetadata.KEY_TITLE, "title");
-        movieMetadata.addImage(new WebImage(Uri.parse("480x270/DesigningForGoogleCast2-480x270.jpg")));
-        movieMetadata.addImage(new WebImage(Uri.parse("780x1200/DesigningForGoogleCast-887x1200.jpg")));
+        movieMetadata.addImage(new WebImage(Uri.parse("https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/images/480x270/DesigningForGoogleCast2-480x270.jpg")));
+        movieMetadata.addImage(new WebImage(Uri.parse("https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/images/780x1200/DesigningForGoogleCast-887x1200.jpg")));
 
         return new MediaInfo.Builder("https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/hls/DesigningForGoogleCast.m3u8")
                 .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)

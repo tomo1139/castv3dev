@@ -33,6 +33,7 @@ import java.util.List;
 
 import develop.beta1139.castv3develp.R;
 import develop.beta1139.castv3develp.activity.ExpandedControlsActivity;
+import develop.beta1139.castv3develp.activity.MainActivity;
 
 /**
  * Implements {@link OptionsProvider} to provide {@link CastOptions}.
@@ -45,7 +46,7 @@ public class CastOptionsProvider implements OptionsProvider {
                 .setActions(Arrays.asList(MediaIntentReceiver.ACTION_SKIP_NEXT,
                         MediaIntentReceiver.ACTION_TOGGLE_PLAYBACK,
                         MediaIntentReceiver.ACTION_STOP_CASTING), new int[]{1, 2})
-                .setTargetActivityClassName(ExpandedControlsActivity.class.getName())
+                .setTargetActivityClassName(MainActivity.class.getName())
                 .build();
         CastMediaOptions mediaOptions = new CastMediaOptions.Builder()
                 .setImagePicker(new ImagePickerImpl())
