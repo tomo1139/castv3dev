@@ -46,7 +46,7 @@ public class CastOptionsProvider implements OptionsProvider {
                 .setActions(Arrays.asList(MediaIntentReceiver.ACTION_SKIP_NEXT,
                         MediaIntentReceiver.ACTION_TOGGLE_PLAYBACK,
                         MediaIntentReceiver.ACTION_STOP_CASTING), new int[]{1, 2})
-                .setTargetActivityClassName(MainActivity.class.getName())
+                .setTargetActivityClassName(ExpandedControlsActivity.class.getName())
                 .build();
         CastMediaOptions mediaOptions = new CastMediaOptions.Builder()
                 .setImagePicker(new ImagePickerImpl())
