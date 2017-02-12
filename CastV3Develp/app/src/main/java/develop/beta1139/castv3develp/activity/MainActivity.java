@@ -258,6 +258,7 @@ public class MainActivity extends AppCompatActivity {
                     mIntroductoryOverlay = new IntroductoryOverlay.Builder(
                             MainActivity.this, mMediaRouteButton)
                             .setTitleText("Introducing Cast")
+                            .setOverlayColor(R.color.colorPrimary)
                             .setSingleTime()
                             .setOnOverlayDismissedListener(
                                     new IntroductoryOverlay.OnOverlayDismissedListener() {
