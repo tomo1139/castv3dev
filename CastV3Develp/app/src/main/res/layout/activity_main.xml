@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:mediaRouteTypes="user"
         android:visibility="gone" />
+
     <fragment
         android:id="@+id/castMiniController"
         android:layout_width="fill_parent"
@@ -22,4 +23,5 @@
         android:layout_alignParentBottom="true"
         android:visibility="gone"
         class="com.google.android.gms.cast.framework.media.widget.MiniControllerFragment"/>
+
 </RelativeLayout>
