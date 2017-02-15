@@ -8,4 +8,14 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="Theme.CastVideosTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="castExpandedControllerStyle">
+            @style/CustomCastExpandedController
+        </item>
+    </style>
+    <style name="CustomCastExpandedController" parent="CastExpandedController">
+        <item name="castControlButtons">
+            @array/cast_expanded_controller_control_buttons
+        </item>
+    </style>
 </resources>

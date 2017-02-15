@@ -29,6 +29,7 @@ import com.google.android.gms.common.images.WebImage;
 
 import java.util.List;
 
+import develop.beta1139.castv3develp.D;
 import develop.beta1139.castv3develp.R;
 import develop.beta1139.castv3develp.activity.ExpandedControlsActivity;
 
@@ -43,7 +44,6 @@ public class CastOptionsProvider implements OptionsProvider {
                 .setTargetActivityClassName(ExpandedControlsActivity.class.getName())
                 .build();
         CastMediaOptions mediaOptions = new CastMediaOptions.Builder()
-                .setImagePicker(new ImagePickerImpl())
                 .setNotificationOptions(notificationOptions)
                 .setExpandedControllerActivityClassName(ExpandedControlsActivity.class.getName())
                 .build();
@@ -63,15 +63,19 @@ public class CastOptionsProvider implements OptionsProvider {
         @Override
         public WebImage onPickImage(MediaMetadata mediaMetadata, int type) {
             if ((mediaMetadata == null) || !mediaMetadata.hasImages()) {
+                D.p("return null");
                 return null;
             }
             List<WebImage> images = mediaMetadata.getImages();
             if (images.size() == 1) {
+                D.p("images.get(0): " + images.get(0));
                 return images.get(0);
             } else {
                 if (type == ImagePicker.IMAGE_TYPE_MEDIA_ROUTE_CONTROLLER_DIALOG_BACKGROUND) {
+                    D.p("images.get(0): " + images.get(0));
                     return images.get(0);
                 } else {
+                    D.p("images.get(0): " + images.get(1));
                     return images.get(1);
                 }
             }

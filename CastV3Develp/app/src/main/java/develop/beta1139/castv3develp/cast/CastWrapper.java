@@ -6,8 +6,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.MediaRouteButton;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
@@ -19,9 +23,11 @@ import com.google.android.gms.cast.framework.CastStateListener;
 import com.google.android.gms.cast.framework.IntroductoryOverlay;
 import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
+import com.google.android.gms.cast.framework.media.widget.MiniControllerFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.images.WebImage;
+import com.squareup.picasso.Picasso;
 
 import develop.beta1139.castv3develp.D;
 import develop.beta1139.castv3develp.R;
@@ -145,7 +151,7 @@ public class CastWrapper {
             private void onApplicationConnected(CastSession castSession) {
                 D.p("");
                 mCastSession = castSession;
-                loadRemoteMedia(0, true);
+                load();
             }
 
             private void onApplicationDisconnected() {
@@ -154,8 +160,7 @@ public class CastWrapper {
         };
     }
 
-    private void loadRemoteMedia(int position, boolean autoPlay) {
-        D.p("");
+    public void load() {
         if (mCastSession == null) {
             return;
         }
@@ -164,19 +169,36 @@ public class CastWrapper {
             return;
         }
 
-        MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
+        MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_GENERIC);
         movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, "sub title");
         movieMetadata.putString(MediaMetadata.KEY_TITLE, "title");
         movieMetadata.addImage(new WebImage(Uri.parse("https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/images/480x270/DesigningForGoogleCast2-480x270.jpg")));
         movieMetadata.addImage(new WebImage(Uri.parse("https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/images/780x1200/DesigningForGoogleCast-887x1200.jpg")));
 
-        MediaInfo mediaInfo = new MediaInfo.Builder("https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/hls/DesigningForGoogleCast.m3u8")
+        final MediaInfo mediaInfo = new MediaInfo.Builder("https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/hls/DesigningForGoogleCast.m3u8")
                 .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
                 .setContentType("application/x-mpegur")
                 .setMetadata(movieMetadata)
                 .build();
 
-        remoteMediaClient.load(mediaInfo, autoPlay, position);
+        AppCompatActivity activity = (AppCompatActivity) mActivity;
+        android.support.v4.app.Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.castMiniController);
+        MiniControllerFragment miniControllerFragment = (MiniControllerFragment) fragment;
+        LinearLayout linearLayout = (LinearLayout) miniControllerFragment.getView();
+        final RelativeLayout relativeLayout = (RelativeLayout) linearLayout.getChildAt(1);
+        for (int i=0; i<relativeLayout.getChildCount(); i++) {
+            D.p("view(" + i + "): " + relativeLayout.getChildAt(i));
+        }
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ImageView imageView = (ImageView) relativeLayout.findViewById(R.id.icon_view);
+                Picasso.with(mContext).load(Uri.parse("https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/images/480x270/DesigningForGoogleCast2-480x270.jpg")).into(imageView);
+            }
+        }, 5000);
+
+        remoteMediaClient.load(mediaInfo, true, 0);
     }
 
     public static boolean checkGooglePlayServices(final Activity activity) {
