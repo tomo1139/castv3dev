@@ -17,10 +17,13 @@
 package develop.beta1139.castv3develp.activity;
 
 import android.view.Menu;
+import android.view.View;
+import android.widget.ImageButton;
 
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.media.widget.ExpandedControllerActivity;
 
+import develop.beta1139.castv3develp.D;
 import develop.beta1139.castv3develp.R;
 
 
@@ -34,6 +37,15 @@ public class ExpandedControlsActivity extends ExpandedControllerActivity {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.expanded_controller, menu);
         CastButtonFactory.setUpMediaRouteButton(this, menu, R.id.media_route_menu_item);
+
+        ImageButton button_0 = (ImageButton) findViewById(R.id.button_0);
+        button_0.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                D.p("clicked");
+            }
+        });
+        button_0.setVisibility(View.GONE);
         return true;
     }
 }

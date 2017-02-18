@@ -209,24 +209,21 @@ public class CastWrapper {
         //final MediaInfo mediaInfo = new MediaInfo.Builder("https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/hls/DesigningForGoogleCast.m3u8")
 
 
-        //MediaTrack englishSubtitle = new MediaTrack.Builder(1 /* ID */,
-        /*
+        MediaTrack englishSubtitle = new MediaTrack.Builder(1 /* ID */,
                 MediaTrack.TYPE_TEXT)
-                .setName("English Subtitle")
+                .setName("English")
                 .setSubtype(MediaTrack.SUBTYPE_CAPTIONS)
-                .setContentId("http://playertest.longtailvideo.com/adaptive/captions/playlist.m3u8")
                 .setLanguage("en-US")
                 .build();
 
         List<MediaTrack> list = new ArrayList<>();
         list.add(englishSubtitle);
-        */
 
         final MediaInfo mediaInfo = new MediaInfo.Builder("http://playertest.longtailvideo.com/adaptive/captions/playlist.m3u8")
                 .setStreamType(MediaInfo.STREAM_TYPE_LIVE)
                 .setContentType("application/x-mpegurl")
                 .setMetadata(movieMetadata)
-                //.setMediaTracks(list)
+                .setMediaTracks(list)
                 .build();
         AppCompatActivity activity = (AppCompatActivity) mActivity;
         android.support.v4.app.Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.castMiniController);
