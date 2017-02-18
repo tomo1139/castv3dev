@@ -15,7 +15,9 @@ import develop.beta1139.castv3develp.cast.CastWrapper;
 public class MainActivity extends AppCompatActivity {
 
     CastWrapper mCastWrapper;
-    Button mButton;
+    Button mReloadButton;
+    Button mEnableButton;
+    Button mDisableButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,11 +26,27 @@ public class MainActivity extends AppCompatActivity {
 
         mCastWrapper = new CastWrapper(this);
 
-        mButton = (Button) findViewById(R.id.cast_button);
-        mButton.setOnClickListener(new View.OnClickListener() {
+        mReloadButton = (Button) findViewById(R.id.cast_button);
+        mReloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mCastWrapper.load();
+            }
+        });
+
+        mEnableButton = (Button) findViewById(R.id.enable_cc);
+        mEnableButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mCastWrapper.enableCaption();
+            }
+        });
+
+        mDisableButton = (Button) findViewById(R.id.disable_cc);
+        mDisableButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mCastWrapper.disableCaption();
             }
         });
 

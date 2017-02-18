@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">CastV3Develp</string>
     <string name="app_id">4F8B3483</string>
+    <string name="app_id_cast_reference_player">4A95D230</string>
+    <string name="app_id_cast_hello_text">D0AC8C16</string>
+    <string name="app_id_cast_hello_video">2F013408</string>
     <string name="media_route_menu_title">Play on&#8230;</string>
 </resources>

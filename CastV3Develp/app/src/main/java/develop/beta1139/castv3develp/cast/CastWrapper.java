@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.google.android.gms.cast.Cast;
+import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.framework.CastButtonFactory;
@@ -26,8 +28,12 @@ import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.cast.framework.media.widget.MiniControllerFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.common.images.WebImage;
 import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
 
 import develop.beta1139.castv3develp.D;
 import develop.beta1139.castv3develp.R;
@@ -58,6 +64,14 @@ public class CastWrapper {
     private void init() {
         mCastContext = CastContext.getSharedInstance(mContext);
         mCastSession = mCastContext.getSessionManager().getCurrentCastSession();
+        try {
+            if (mCastSession != null) {
+                D.p("setMessageReceivedCallbacks");
+                mCastSession.setMessageReceivedCallbacks(mCustomChannel.getNamespace(), mCustomChannel);
+            }
+        } catch (IOException e) {
+            D.p("setMessageReceivedCallbacks error");
+        }
 
         mMediaRouteButton = (MediaRouteButton) mActivity.findViewById(R.id.media_route_button);
         CastButtonFactory.setUpMediaRouteButton(mContext, mMediaRouteButton);
@@ -84,8 +98,15 @@ public class CastWrapper {
         mCastContext.getSessionManager().addSessionManagerListener(
                 mSessionManagerListener, CastSession.class);
         if (mCastSession == null) {
-            mCastSession = CastContext.getSharedInstance(mContext).getSessionManager()
-                    .getCurrentCastSession();
+            mCastSession = CastContext.getSharedInstance(mContext).getSessionManager().getCurrentCastSession();
+            try {
+                if (mCastSession != null) {
+                    D.p("setMessageReceivedCallbacks");
+                    mCastSession.setMessageReceivedCallbacks(mCustomChannel.getNamespace(), mCustomChannel);
+                }
+            } catch (IOException e) {
+                D.p("setMessageReceivedCallbacks error");
+            }
         }
     }
 
@@ -151,6 +172,14 @@ public class CastWrapper {
             private void onApplicationConnected(CastSession castSession) {
                 D.p("");
                 mCastSession = castSession;
+                try {
+                    if (mCastSession != null) {
+                        D.p("setMessageReceivedCallbacks");
+                        mCastSession.setMessageReceivedCallbacks(mCustomChannel.getNamespace(), mCustomChannel);
+                    }
+                } catch (IOException e) {
+                    D.p("setMessageReceivedCallbacks error");
+                }
                 load();
             }
 
@@ -169,18 +198,17 @@ public class CastWrapper {
             return;
         }
 
-        MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_GENERIC);
+        MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
         movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, "sub title");
         movieMetadata.putString(MediaMetadata.KEY_TITLE, "title");
         movieMetadata.addImage(new WebImage(Uri.parse("https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/images/480x270/DesigningForGoogleCast2-480x270.jpg")));
         movieMetadata.addImage(new WebImage(Uri.parse("https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/images/780x1200/DesigningForGoogleCast-887x1200.jpg")));
-
-        final MediaInfo mediaInfo = new MediaInfo.Builder("https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/hls/DesigningForGoogleCast.m3u8")
-                .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-                .setContentType("application/x-mpegur")
+        //final MediaInfo mediaInfo = new MediaInfo.Builder("https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/hls/DesigningForGoogleCast.m3u8")
+        final MediaInfo mediaInfo = new MediaInfo.Builder("http://playertest.longtailvideo.com/adaptive/captions/playlist.m3u8")
+                .setStreamType(MediaInfo.STREAM_TYPE_LIVE)
+                .setContentType("application/x-mpegurl")
                 .setMetadata(movieMetadata)
                 .build();
-
         AppCompatActivity activity = (AppCompatActivity) mActivity;
         android.support.v4.app.Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.castMiniController);
         MiniControllerFragment miniControllerFragment = (MiniControllerFragment) fragment;
@@ -245,6 +273,44 @@ public class CastWrapper {
                     mIntroductoryOverlay.show();
                 }
             });
+        }
+    }
+
+    private CustomChannel mCustomChannel = new CustomChannel();
+
+    class CustomChannel implements Cast.MessageReceivedCallback {
+        public String getNamespace() {
+            return "urn:x-cast:com.example.custom";
+        }
+        @Override
+        public void onMessageReceived(CastDevice castDevice, String namespace, String message) {
+            D.p("castDevice: " + castDevice + ", namespace: " + namespace + ", message: " + message);
+        }
+    }
+
+    public void enableCaption() {
+        sendMessage("enableCaption");
+    }
+
+    public void disableCaption() {
+        sendMessage("disableCaption");
+    }
+
+    private void sendMessage(String message) {
+        D.p("message: " + message);
+        if (mCustomChannel != null) {
+            try {
+                mCastSession.sendMessage(mCustomChannel.getNamespace(), message)
+                        .setResultCallback(
+                                new ResultCallback<Status>() {
+                                    @Override
+                                    public void onResult(Status result) {
+                                        D.p("result: " + result.toString());
+                                    }
+                                });
+            } catch (Exception e) {
+                D.p(e.toString());
+            }
         }
     }
 }
