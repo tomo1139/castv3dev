@@ -58,6 +58,8 @@ public class CastWrapper {
     private Activity mActivity;
     private Context mContext;
 
+    private CustomChannel mCustomChannel;
+
     public CastWrapper(Activity activity) {
         mActivity = activity;
         mContext = mActivity.getApplicationContext();
@@ -67,14 +69,6 @@ public class CastWrapper {
     private void init() {
         mCastContext = CastContext.getSharedInstance(mContext);
         mCastSession = mCastContext.getSessionManager().getCurrentCastSession();
-        try {
-            if (mCastSession != null) {
-                D.p("setMessageReceivedCallbacks");
-                mCastSession.setMessageReceivedCallbacks(mCustomChannel.getNamespace(), mCustomChannel);
-            }
-        } catch (IOException e) {
-            D.p("setMessageReceivedCallbacks error");
-        }
 
         mMediaRouteButton = (MediaRouteButton) mActivity.findViewById(R.id.media_route_button);
         CastButtonFactory.setUpMediaRouteButton(mContext, mMediaRouteButton);
@@ -92,6 +86,8 @@ public class CastWrapper {
                 }
             }
         };
+
+        mCustomChannel = new CustomChannel();
 
         setupCastListener();
     }
@@ -208,7 +204,6 @@ public class CastWrapper {
         movieMetadata.addImage(new WebImage(Uri.parse("https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/images/780x1200/DesigningForGoogleCast-887x1200.jpg")));
         //final MediaInfo mediaInfo = new MediaInfo.Builder("https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/hls/DesigningForGoogleCast.m3u8")
 
-
         MediaTrack englishSubtitle = new MediaTrack.Builder(1 /* ID */,
                 MediaTrack.TYPE_TEXT)
                 .setName("English")
@@ -292,41 +287,15 @@ public class CastWrapper {
         }
     }
 
-    private CustomChannel mCustomChannel = new CustomChannel();
-
-    class CustomChannel implements Cast.MessageReceivedCallback {
-        public String getNamespace() {
-            return "urn:x-cast:com.example.custom";
-        }
-        @Override
-        public void onMessageReceived(CastDevice castDevice, String namespace, String message) {
-            D.p("castDevice: " + castDevice + ", namespace: " + namespace + ", message: " + message);
-        }
-    }
-
     public void enableCaption() {
-        sendMessage("enableCaption");
+        if (mCastSession != null) {
+            mCustomChannel.sendMessage(mCastSession, "enableCaption");
+        }
     }
 
     public void disableCaption() {
-        sendMessage("disableCaption");
-    }
-
-    private void sendMessage(String message) {
-        D.p("message: " + message);
-        if (mCustomChannel != null) {
-            try {
-                mCastSession.sendMessage(mCustomChannel.getNamespace(), message)
-                        .setResultCallback(
-                                new ResultCallback<Status>() {
-                                    @Override
-                                    public void onResult(Status result) {
-                                        D.p("result: " + result.toString());
-                                    }
-                                });
-            } catch (Exception e) {
-                D.p(e.toString());
-            }
+        if (mCastSession != null) {
+            mCustomChannel.sendMessage(mCastSession, "disableCaption");
         }
     }
 }

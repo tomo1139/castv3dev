@@ -25,18 +25,18 @@ import com.google.android.gms.cast.framework.media.widget.ExpandedControllerActi
 
 import develop.beta1139.castv3develp.D;
 import develop.beta1139.castv3develp.R;
+import develop.beta1139.castv3develp.cast.CastWrapper;
 
 
 /**
  * An example of extending {@link ExpandedControllerActivity} to add a cast button.
  */
 public class ExpandedControlsActivity extends ExpandedControllerActivity {
+    private CastWrapper mCastWrapper;
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.expanded_controller, menu);
-        CastButtonFactory.setUpMediaRouteButton(this, menu, R.id.media_route_menu_item);
+    protected void onResume() {
+        super.onResume();
 
         ImageButton button_0 = (ImageButton) findViewById(R.id.button_0);
         button_0.setOnClickListener(new View.OnClickListener() {
@@ -45,7 +45,14 @@ public class ExpandedControlsActivity extends ExpandedControllerActivity {
                 D.p("clicked");
             }
         });
-        button_0.setVisibility(View.GONE);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.expanded_controller, menu);
+        CastButtonFactory.setUpMediaRouteButton(this, menu, R.id.media_route_menu_item);
+
         return true;
     }
 }
