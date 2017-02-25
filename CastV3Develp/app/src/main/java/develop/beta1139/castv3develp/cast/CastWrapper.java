@@ -13,8 +13,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.google.android.gms.cast.Cast;
-import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.MediaTrack;
@@ -29,8 +27,6 @@ import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.cast.framework.media.widget.MiniControllerFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.common.images.WebImage;
 import com.squareup.picasso.Picasso;
 
@@ -40,6 +36,7 @@ import java.util.List;
 
 import develop.beta1139.castv3develp.D;
 import develop.beta1139.castv3develp.R;
+import develop.beta1139.castv3develp.cast.custom.CustomMediaRouteDialogFactory;
 
 /**
  * Created by tomo on 2017/02/12.
@@ -71,6 +68,7 @@ public class CastWrapper {
         mCastSession = mCastContext.getSessionManager().getCurrentCastSession();
 
         mMediaRouteButton = (MediaRouteButton) mActivity.findViewById(R.id.media_route_button);
+        mMediaRouteButton.setDialogFactory(new CustomMediaRouteDialogFactory());
         CastButtonFactory.setUpMediaRouteButton(mContext, mMediaRouteButton);
 
         mCastStateListener = new CastStateListener() {
